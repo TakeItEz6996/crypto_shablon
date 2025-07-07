@@ -1,0 +1,9 @@
+{
+  "BTC": {"amount": 0.0006, "buy_usd": 76.1},
+  "ETH": {"amount": 0.01, "buy_usd": 25.3},
+  "SOL": {"amount": 0.513, "buy_usd": 76.1},
+  "ARB": {"amount": 143.47, "buy_usd": 50.8},
+  "TON": {"amount": 15.04, "buy_usd": 63.1},
+  "USDT": {"amount": 65, "source": "bybit", "staking": 6.07},
+  "NFT": {"name": "VALA Prime Pass", "buy_floor_sol": 0.015}
+}

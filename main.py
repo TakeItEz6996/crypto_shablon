@@ -72,6 +72,7 @@ async def portfolio(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     except Exception as e:
         await update.message.reply_text("Ошибка при чтении портфеля.")
 
+
 async def get_prices():
     url = "https://api.coingecko.com/api/v3/simple/price"
     params = {
@@ -81,19 +82,21 @@ async def get_prices():
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params, timeout=10.0)
-            response.raise_for_status()
+            response = await client.get(url, params=params)
+            response.raise_for_status()  # ← если ошибка — вызовет исключение
             data = response.json()
+
             return {
                 "BTC": data["bitcoin"]["usd"],
                 "ETH": data["ethereum"]["usd"],
                 "SOL": data["solana"]["usd"],
                 "ARB": data["arbitrum"]["usd"],
-                "TON": data["toncoin"]["usd"]
+                "TON": data["toncoin"]["usd"],
             }
     except Exception as e:
-        print(f"Ошибка при запросе цен: {e}")
+        print(f"Ошибка в get_prices: {e}")  # Можно удалить в релизе
         return None
+
 
 async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Показывает текущие цены на основные активы"""

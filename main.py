@@ -1,3 +1,4 @@
+import json
 import os
 from contextlib import asynccontextmanager
 from http import HTTPStatus
@@ -42,9 +43,34 @@ async def process_update(request: Request):
     return Response(status_code=HTTPStatus.OK)
 
 
-async def start(update: Update, _: ContextTypes.DEFAULT_TYPE):
-    """ Handles the /start command by sending a "Hello world!" message in response. """
-    await update.message.reply_text("Привет, брат 👊 Бот на связи! Жми /портфель, /рынок или /нфт")
+async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Обрабатывает команду /start """
+    reply = "Привет, брат 👋 Я готов к бою!\n\nДоступные команды:\n" \
+            "/портфель — показать активы\n" \
+            "/рынок — анализ ситуации\n" \
+            "/нфт — NFT-пульс"
+    await update.message.reply_text(reply)
+
+
+async def portfolio(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Показывает портфель инвестиций """
+    try:
+        with open("portfolio.json", "r") as f:
+            data = json.load(f)
+
+        reply = "📊 Портфель:\n"
+        for key, info in data.items():
+            if key == "USDT":
+                reply += f"USDT (Bybit): ${info['amount']} — стейкинг {info['staking']}%\n"
+            elif key == "NFT":
+                reply += f"NFT: 🎴 {info['name']} (вход: {info['buy_floor_sol']} SOL)\n"
+            else:
+                reply += f"{key}: {info['amount']} — куплено на ${info['buy_usd']}\n"
+
+        await update.message.reply_text(reply)
+    except Exception as e:
+        await update.message.reply_text("Ошибка при чтении портфеля.")
+
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -64,4 +90,5 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 bot_builder.add_handler(CommandHandler(command="start", callback=start))
+bot_builder.add_handler(CommandHandler("портфель", portfolio))
 bot_builder.add_handler(MessageHandler(filters=filters.TEXT & ~filters.COMMAND, callback=echo))

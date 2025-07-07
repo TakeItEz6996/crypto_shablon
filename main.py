@@ -77,18 +77,18 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = update.message.text.lower()
 
     if text == "/портфель":
-        reply = "📊 Портфель: BTC, ETH, SOL, TON, USDT, NFT"
+        await portfolio(update, context)
     elif text == "/рынок":
-        reply = "📈 Рынок стабилен. Ждём сигнал по TON и SOL"
+        await update.message.reply_text("📉 Рынок стабилен. Ждём сигнал по TON и SOL")
     elif text == "/нфт":
-        reply = "🎯 NFT-пульс: VALA в портфеле. Следим за Rogues Dead"
+        await update.message.reply_text("🖼 NFT-пульс: VALA в портфеле. Следим за Rogues Dead")
     else:
-        reply = f"Брат, не понял 🧐 Попробуй: /портфель, /рынок или /нфт"
+        reply = "🤔 Брат, не понял 🧠 Попробуй: /портфель, /рынок или /нфт"
+        await update.message.reply_text(reply)
 
-    await update.message.reply_text(reply)
 
 
 
 bot_builder.add_handler(CommandHandler(command="start", callback=start))
-bot_builder.add_handler(CommandHandler("портфель", portfolio))
+bot_builder.add_handler(CommandHandler("portfolio", portfolio))
 bot_builder.add_handler(MessageHandler(filters=filters.TEXT & ~filters.COMMAND, callback=echo))

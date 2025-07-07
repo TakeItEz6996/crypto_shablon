@@ -44,12 +44,23 @@ async def process_update(request: Request):
 
 async def start(update: Update, _: ContextTypes.DEFAULT_TYPE):
     """ Handles the /start command by sending a "Hello world!" message in response. """
-    await update.message.reply_text("Hello! 🍡 Send me a message and I'll echo it back to you")
+    await update.message.reply_text("Привет, брат 👊 Бот на связи! Жми /портфель, /рынок или /нфт")
 
 
-async def echo(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    """Echo the user message."""
-    await update.message.reply_text(update.message.text)
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    text = update.message.text.lower()
+
+    if text == "/портфель":
+        reply = "📊 Портфель: BTC, ETH, SOL, TON, USDT, NFT"
+    elif text == "/рынок":
+        reply = "📈 Рынок стабилен. Ждём сигнал по TON и SOL"
+    elif text == "/нфт":
+        reply = "🎯 NFT-пульс: VALA в портфеле. Следим за Rogues Dead"
+    else:
+        reply = f"Брат, не понял 🧐 Попробуй: /портфель, /рынок или /нфт"
+
+    await update.message.reply_text(reply)
+
 
 
 bot_builder.add_handler(CommandHandler(command="start", callback=start))

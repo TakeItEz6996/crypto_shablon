@@ -117,7 +117,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if text == "/портфель":
         await portfolio(update, context)
     elif text == "/рынок":
-        await update.message.reply_text("📉 Рынок стабилен. Ждём сигнал по TON и SOL")
+         await market(update, context)
     elif text == "/нфт":
         await update.message.reply_text("🖼 NFT-пульс: VALA в портфеле. Следим за Rogues Dead")
     else:
@@ -129,5 +129,5 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 bot_builder.add_handler(CommandHandler(command="start", callback=start))
 bot_builder.add_handler(CommandHandler("portfolio", portfolio))
-bot_builder.add_handler(CommandHandler("рынок", market))
+bot_builder.add_handler(CommandHandler("market", market))
 bot_builder.add_handler(MessageHandler(filters=filters.TEXT & ~filters.COMMAND, callback=echo))

@@ -90,15 +90,19 @@ async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(reply)
 
 
+import httpx
+
 async def get_prices():
+    url = "https://api.coingecko.com/api/v3/simple/price"
+    params = {
+        "ids": "bitcoin,ethereum,solana,arbitrum,toncoin",
+        "vs_currencies": "usd"
+    }
+
     try:
         async with httpx.AsyncClient() as client:
-            url = "https://api.coingecko.com/api/v3/simple/price"
-            params = {
-                "ids": "bitcoin,ethereum,solana,arbitrum,toncoin",
-                "vs_currencies": "usd"
-            }
-            response = await client.get(url, params=params)
+            response = await client.get(url, params=params, timeout=10.0)
+            response.raise_for_status()
             data = response.json()
             return {
                 "BTC": data["bitcoin"]["usd"],
@@ -108,7 +112,9 @@ async def get_prices():
                 "TON": data["toncoin"]["usd"]
             }
     except Exception as e:
+        print(f"Ошибка при запросе цен: {e}")
         return None
+
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

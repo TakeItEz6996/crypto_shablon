@@ -90,8 +90,6 @@ async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(reply)
 
 
-import httpx
-
 async def get_prices():
     url = "https://api.coingecko.com/api/v3/simple/price"
     params = {

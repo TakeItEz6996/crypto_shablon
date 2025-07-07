@@ -1,3 +1,4 @@
+import httpx
 import json
 import os
 from contextlib import asynccontextmanager
@@ -71,6 +72,43 @@ async def portfolio(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     except Exception as e:
         await update.message.reply_text("Ошибка при чтении портфеля.")
 
+async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Показывает текущие цены на основные активы"""
+    prices = await get_prices()
+    if prices:
+        reply = (
+            f"📊 Актуальные курсы:\n"
+            f"BTC: ${prices['BTC']}\n"
+            f"ETH: ${prices['ETH']}\n"
+            f"SOL: ${prices['SOL']}\n"
+            f"ARB: ${prices['ARB']}\n"
+            f"TON: ${prices['TON']}"
+        )
+    else:
+        reply = "❌ Не удалось получить цены с CoinGecko."
+
+    await update.message.reply_text(reply)
+
+
+async def get_prices():
+    try:
+        async with httpx.AsyncClient() as client:
+            url = "https://api.coingecko.com/api/v3/simple/price"
+            params = {
+                "ids": "bitcoin,ethereum,solana,arbitrum,toncoin",
+                "vs_currencies": "usd"
+            }
+            response = await client.get(url, params=params)
+            data = response.json()
+            return {
+                "BTC": data["bitcoin"]["usd"],
+                "ETH": data["ethereum"]["usd"],
+                "SOL": data["solana"]["usd"],
+                "ARB": data["arbitrum"]["usd"],
+                "TON": data["toncoin"]["usd"]
+            }
+    except Exception as e:
+        return None
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -91,4 +129,5 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 bot_builder.add_handler(CommandHandler(command="start", callback=start))
 bot_builder.add_handler(CommandHandler("portfolio", portfolio))
+bot_builder.add_handler(CommandHandler("рынок", market))
 bot_builder.add_handler(MessageHandler(filters=filters.TEXT & ~filters.COMMAND, callback=echo))

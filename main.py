@@ -74,28 +74,34 @@ async def portfolio(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def get_prices():
-    url = "https://api.coingecko.com/api/v3/simple/price"
+    url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+    headers = {
+        "Accepts": "application/json",
+        "X-CMC_PRO_API_KEY": os.getenv("COINMARKETCAP_API_KEY")
+    }
+    symbols = ["BTC", "ETH", "SOL", "ARB", "TON"]
     params = {
-        "ids": "bitcoin,ethereum,solana,arbitrum,toncoin",
-        "vs_currencies": "usd"
+        "symbol": ",".join(symbols),
+        "convert": "USD"
     }
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)
-            response.raise_for_status()  # ← если ошибка — вызовет исключение
-            data = response.json()
+            response = await client.get(url, params=params, headers=headers)
+            response.raise_for_status()
+            data = response.json()["data"]
 
             return {
-                "BTC": data["bitcoin"]["usd"],
-                "ETH": data["ethereum"]["usd"],
-                "SOL": data["solana"]["usd"],
-                "ARB": data["arbitrum"]["usd"],
-                "TON": data["toncoin"]["usd"],
+                "BTC": round(data["BTC"]["quote"]["USD"]["price"], 2),
+                "ETH": round(data["ETH"]["quote"]["USD"]["price"], 2),
+                "SOL": round(data["SOL"]["quote"]["USD"]["price"], 2),
+                "ARB": round(data["ARB"]["quote"]["USD"]["price"], 2),
+                "TON": round(data["TON"]["quote"]["USD"]["price"], 2),
             }
     except Exception as e:
-        print(f"Ошибка в get_prices: {e}")  # Можно удалить в релизе
+        print(f"Ошибка в get_prices: {e}")
         return None
+
 
 
 async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

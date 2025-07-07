@@ -72,24 +72,6 @@ async def portfolio(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     except Exception as e:
         await update.message.reply_text("Ошибка при чтении портфеля.")
 
-async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Показывает текущие цены на основные активы"""
-    prices = await get_prices()
-    if prices:
-        reply = (
-            f"📊 Актуальные курсы:\n"
-            f"BTC: ${prices['BTC']}\n"
-            f"ETH: ${prices['ETH']}\n"
-            f"SOL: ${prices['SOL']}\n"
-            f"ARB: ${prices['ARB']}\n"
-            f"TON: ${prices['TON']}"
-        )
-    else:
-        reply = "❌ Не удалось получить цены с CoinGecko."
-
-    await update.message.reply_text(reply)
-
-
 async def get_prices():
     url = "https://api.coingecko.com/api/v3/simple/price"
     params = {
@@ -112,6 +94,23 @@ async def get_prices():
     except Exception as e:
         print(f"Ошибка при запросе цен: {e}")
         return None
+
+async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Показывает текущие цены на основные активы"""
+    prices = await get_prices()
+    if prices:
+        reply = (
+            f"📊 Актуальные курсы:\n"
+            f"BTC: ${prices['BTC']}\n"
+            f"ETH: ${prices['ETH']}\n"
+            f"SOL: ${prices['SOL']}\n"
+            f"ARB: ${prices['ARB']}\n"
+            f"TON: ${prices['TON']}"
+        )
+    else:
+        reply = "❌ Не удалось получить цены с CoinGecko."
+
+    await update.message.reply_text(reply)
 
 
 

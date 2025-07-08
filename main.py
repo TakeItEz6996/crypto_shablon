@@ -102,6 +102,18 @@ async def get_prices():
         print(f"Ошибка в get_prices: {e}")
         return None
 
+def calculate_profit(prices, portfolio):
+    result = []
+    for token, info in portfolio.items():
+        if token not in prices:
+            continue
+        current_price = prices[token]
+        buy_price = info["buy_usd"]
+        percent = round(((current_price - buy_price) / buy_price) * 100, 2)
+        arrow = "📈" if percent > 0 else "📉"
+        result.append(f"{token}: {percent:+.2f}% {arrow}")
+    return result
+
 
 
 async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -121,6 +133,25 @@ async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await update.message.reply_text(reply)
 
+async def profit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    try:
+        with open("portfolio.json", "r") as f:
+            portfolio = json.load(f)
+
+        prices = await get_prices()
+
+        if not prices:
+            await update.message.reply_text("❌ Не удалось получить цены.")
+            return
+
+        lines = calculate_profit(prices, portfolio)
+        reply = "💰 Доходность портфеля:\n\n" + "\n".join(lines)
+        await update.message.reply_text(reply)
+
+    except Exception as e:
+        await update.message.reply_text("⚠️ Ошибка при расчёте доходности.")
+        print(f"Ошибка в /доход: {e}")
+
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -130,6 +161,8 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await portfolio(update, context)
     elif text == "/рынок":
          await market(update, context)
+    elif text == "/профит":
+         await profit(update, context)
     elif text == "/нфт":
         await update.message.reply_text("🖼 NFT-пульс: VALA в портфеле. Следим за Rogues Dead")
     else:
@@ -142,4 +175,5 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 bot_builder.add_handler(CommandHandler(command="start", callback=start))
 bot_builder.add_handler(CommandHandler("portfolio", portfolio))
 bot_builder.add_handler(CommandHandler("market", market))
+bot_builder.add_handler(CommandHandler("profit", profit))
 bot_builder.add_handler(MessageHandler(filters=filters.TEXT & ~filters.COMMAND, callback=echo))

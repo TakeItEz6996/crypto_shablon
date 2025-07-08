@@ -107,14 +107,19 @@ def calculate_profit(prices, portfolio):
     for token, info in portfolio.items():
         if token not in prices:
             continue
+
         current_price = prices[token]
-        buy_price = info["buy_usd"]
-        percent = round(((current_price - buy_price) / buy_price) * 100, 2)
+        amount = info.get("amount", 0)
+        buy_usd = info.get("buy_usd", 0)
+
+        if amount == 0 or buy_usd == 0:
+            continue
+
+        current_value = amount * current_price
+        percent = round(((current_value - buy_usd) / buy_usd) * 100, 2)
         arrow = "📈" if percent > 0 else "📉"
         result.append(f"{token}: {percent:+.2f}% {arrow}")
     return result
-
-
 
 async def market(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Показывает текущие цены на основные активы"""

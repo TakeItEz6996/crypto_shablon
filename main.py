@@ -12,7 +12,7 @@ from telegram.ext import Application, ContextTypes, CommandHandler, MessageHandl
 # Load environment variables
 load_dotenv()
 TELEGRAM_BOT_TOKEN: str = os.getenv('TELEGRAM_BOT_TOKEN')
-OWNER_ID = None  # Здесь позже сохраним твой chat_id
+OWNER_ID = 553994132  # Здесь позже сохраним твой chat_id
 WEBHOOK_DOMAIN: str = os.getenv('RAILWAY_PUBLIC_DOMAIN')
 
 # Build the Telegram Bot application

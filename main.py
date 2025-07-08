@@ -59,6 +59,7 @@ async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         "/нфт — NFT-пульс"
     )
     await update.message.reply_text(reply)
+    await bot_builder.bot.send_message(chat_id=OWNER_ID, text="✅ Уведомления активны!")
 
     print(f"🔐 chat_id: {update.effective_chat.id}")
 

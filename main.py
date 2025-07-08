@@ -47,16 +47,19 @@ async def process_update(request: Request):
 
 
 async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    """ Обрабатывает команду /start """
     global OWNER_ID
-OWNER_ID = update.effective_chat.id
+    OWNER_ID = update.effective_chat.id
 
-    reply = "Привет, брат 👋 Я готов к бою!\n\nДоступные команды:\n" \
-            "/портфель — показать активы\n" \
-            "/рынок — анализ ситуации\n" \
-            "/нфт — NFT-пульс"
+    reply = (
+        "Привет, брат 🤝 Я готов к бою!\n\nДоступные команды:\n"
+        "/портфель — показать активы\n"
+        "/рынок — анализ ситуации\n"
+        "/нфт — NFT-пульс"
+    )
     await update.message.reply_text(reply)
+
     print(f"🔐 chat_id: {update.effective_chat.id}")
+
 
 
 async def portfolio(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:

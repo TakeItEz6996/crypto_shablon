@@ -32,6 +32,8 @@ async def lifespan(_: FastAPI):
         await bot_builder.start()
         yield
         await bot_builder.stop()
+        await bot_builder.bot.send_message(chat_id=OWNER_ID, text="✅ Уведомления активны!")
+
 
 
 app = FastAPI(lifespan=lifespan)

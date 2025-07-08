@@ -1,6 +1,7 @@
 import httpx
 import json
 import os
+import asyncio
 from contextlib import asynccontextmanager
 from http import HTTPStatus
 from dotenv import load_dotenv
@@ -11,6 +12,7 @@ from telegram.ext import Application, ContextTypes, CommandHandler, MessageHandl
 # Load environment variables
 load_dotenv()
 TELEGRAM_BOT_TOKEN: str = os.getenv('TELEGRAM_BOT_TOKEN')
+OWNER_ID = None  # Здесь позже сохраним твой chat_id
 WEBHOOK_DOMAIN: str = os.getenv('RAILWAY_PUBLIC_DOMAIN')
 
 # Build the Telegram Bot application
@@ -46,11 +48,15 @@ async def process_update(request: Request):
 
 async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     """ Обрабатывает команду /start """
+    global OWNER_ID
+OWNER_ID = update.effective_chat.id
+
     reply = "Привет, брат 👋 Я готов к бою!\n\nДоступные команды:\n" \
             "/портфель — показать активы\n" \
             "/рынок — анализ ситуации\n" \
             "/нфт — NFT-пульс"
     await update.message.reply_text(reply)
+    print(f"🔐 chat_id: {update.effective_chat.id}")
 
 
 async def portfolio(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
